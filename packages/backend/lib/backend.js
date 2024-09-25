@@ -1,7 +1,7 @@
 'use strict';
-
-module.exports = backend;
-
-function backend() {
-  return 'Hello from backend';
+const commons = require('commons');
+function backend(name) {
+    const common = commons(name);
+    return `${common}, Hello  from backend`;
 }
+module.exports = backend;
