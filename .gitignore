@@ -130,3 +130,9 @@ dist
 .pnp.*
 
 .nx/cache
+
+
+
+.nx/workspace-data
+
+**/dist
