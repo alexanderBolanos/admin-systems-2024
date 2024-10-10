@@ -16,7 +16,15 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+      expect(appController.getHello()).toStrictEqual({
+        data: {
+          id: 1,
+          name: 'Test',
+          payload: { operation: 'Testing' },
+          status: 1,
+        },
+        success: true,
+      });
     });
   });
 });
