@@ -1,0 +1,32 @@
+version: '3'
+services:
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: wordpress_db
+      MYSQL_ROOT_PASSWORD: 'ultrasecret'
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      wordpress_ntw:
+        ipv4_address: '10.56.1.22'
+  wordpress:
+    image: wordpress
+    ports:
+      - '8080:80'
+    depends_on:
+      - mysql
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: 'ultrasecret'
+      WORDPRESS_DB_NAME: wordpress_db
+    networks:
+      wordpress_ntw:
+        ipv4_address: '10.56.1.21'
+networks:
+  wordpress_ntw:
+    ipam:
+      driver: default
+      config:
+        - subnet: '10.56.1.0/24'
