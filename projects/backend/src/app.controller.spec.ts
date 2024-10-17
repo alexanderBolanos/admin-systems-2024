@@ -23,7 +23,6 @@ describe('AppController', () => {
           payload: { operation: 'Testing' },
           status: 1,
         },
-        success: true,
       });
     });
   });

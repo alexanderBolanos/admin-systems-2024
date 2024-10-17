@@ -13,6 +13,6 @@ export class AppService {
       status: Status.SUCCESS,
     };
 
-    return validateDTO(baseObject);
+    return validateDTO(baseObject).data;
   }
 }
