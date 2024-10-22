@@ -76,3 +76,62 @@ docker run -d -it --rm -p 3000:3000 --name backend backend:latest
 ```sh {"id":"01J9TQ2TNH82A0P5JFPQ5TRYSS"}
 docker run -d -it --rm -p 8080:8080 --name frontend frontend:latest
 ```
+
+## Adding a Docker Compose File
+
+```sh
+tee docker-compose.yaml<<EOF
+version: '3.8'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+    container_name: backend-service
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+    networks:
+      monorepo_network:
+        ipv4_address: '10.56.1.22'
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend
+    container_name: frontend-service
+    ports:
+      - '8080:8080'
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      monorepo_network:
+        ipv4_address: '10.56.1.23'
+networks:
+  monorepo_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: '10.56.1.0/24'
+EOF
+```
+
+#### Mount your compose:
+
+```sh
+docker compose up
+```
+
+### Util commands:
+
+```sh
+docker compose images
+docker compose ls
+docker compose ps
+docker compose version
+```
