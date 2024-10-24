@@ -1,3 +1,4 @@
 pnpm --filter core run test
 pnpm --filter backend run test
 pnpm --filter frontend run test
+pnpm run -r build
