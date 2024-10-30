@@ -43,7 +43,7 @@ export type PokemonDTO = z.infer<typeof PokemonDTO>;
  * @param record
  * @returns a PokemonDTO object or null
  */
-export function mapPokemonDTO(record: any): PokemonDTO | null {
+export function mapPokemonDTO(record: Record<string, any>): PokemonDTO | null {
   try {
     console.log('??? sprites: ', record.sprites);
     const pokemon: PokemonDTO = {

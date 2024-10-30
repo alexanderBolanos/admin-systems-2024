@@ -8,7 +8,7 @@ export const usePokemon = () => {
   const [error, setError] = useState<Error | null>();
 
   const fetchData = async (
-    url: string = 'http://localhost:3000/api/v1/pokemon/random-list?length=3&min=1&max=100',
+    url: string = 'http://localhost:3000/api/v1/pokemon/random-list?length=1&min=1&max=255',
   ) => {
     setIsLoading(true);
     try {

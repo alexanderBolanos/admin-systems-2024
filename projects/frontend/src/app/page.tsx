@@ -1,21 +1,26 @@
-import { BaseRecord, Status, validateDTO } from 'core';
+'use client';
+import { usePokemon } from '@/custom-hooks/usePokemon';
+import Image from 'next/image';
 
 export default function Home() {
-  const base: BaseRecord = {
-    id: 3,
-    name: 'Front Test',
-    data: {
-      result: Status.SUCCESS,
-    },
-    status: Status.SUCCESS,
-  };
-
-  const validation = validateDTO(base);
+  const { isLoading, pokemons, error } = usePokemon();
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div>{JSON.stringify(validation.data)}</div>
+        {error && <div>{error.message}</div>}
+        {isLoading ? (
+          <div>Loading</div>
+        ) : (
+          <ul>
+            {pokemons.map((p) => (
+              <li key={p.id}>
+                {p.name}
+                <Image src={p.sprites?.front} alt={p.name} />
+              </li>
+            ))}
+          </ul>
+        )}
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center"></footer>
     </div>
