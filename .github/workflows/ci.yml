@@ -35,3 +35,6 @@ jobs:
 
       - name: Run global tests
         run: pnpm run -r test
+
+      - name: Run global building
+        run: pnpm run -r build
