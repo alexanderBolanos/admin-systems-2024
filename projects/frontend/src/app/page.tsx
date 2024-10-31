@@ -16,6 +16,8 @@ export default function Home() {
               <li key={p.id}>
                 {p.name}
                 {p.types?.map((t) => <span key={t}>t</span>)}
+                {p.sprites?.back}
+                {p.sprites?.front}
               </li>
             ))}
           </ul>
