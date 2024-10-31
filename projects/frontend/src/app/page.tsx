@@ -1,6 +1,5 @@
 'use client';
 import { usePokemon } from '@/custom-hooks/usePokemon';
-import Image from 'next/image';
 
 export default function Home() {
   const { isLoading, pokemons, error } = usePokemon();
@@ -16,7 +15,7 @@ export default function Home() {
             {pokemons.map((p) => (
               <li key={p.id}>
                 {p.name}
-                <Image src={p.sprites?.front} alt={p.name} />
+                {p.types?.map((t) => <span key={t}>t</span>)}
               </li>
             ))}
           </ul>
