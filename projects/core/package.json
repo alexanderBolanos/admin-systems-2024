@@ -4,7 +4,7 @@
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
-    "test": "nx jest:test",
+    "test": "jest",
     "build": "rm -rf ./dist && tsc"
   },
   "keywords": [],
