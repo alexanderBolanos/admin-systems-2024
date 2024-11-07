@@ -12,4 +12,3 @@ images:
 
 options:
   logging: CLOUD_LOGGING_ONLY
-  logsBucket: gs://admin-systems-2024-bucket-01
