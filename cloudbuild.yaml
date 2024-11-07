@@ -9,3 +9,7 @@ steps:
 
 images:
   - 'gcr.io/admin-systems-2024/admin-systems-2024'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  logsBucket: gs://admin-systems-2024-bucket-01
