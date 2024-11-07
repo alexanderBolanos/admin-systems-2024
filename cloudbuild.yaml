@@ -1,0 +1,11 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/admin-systems-2024/admin-systems-2024', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/admin-systems-2024/admin-systems-2024']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'admin-systems-2024', '--image', 'gcr.io/admin-systems-2024/admin-systems-2024', '--region', 'us-east1', '--platform', 'managed']
+
+images:
+  - 'gcr.io/admin-systems-2024/admin-systems-2024'
