@@ -15,6 +15,7 @@ RUN pnpm fetch --prod
 FROM prod AS build
 COPY . /app
 WORKDIR /app
+RUN pnpm install
 RUN pnpm run -r build
 RUN pnpm deploy --filter=backend --prod /prod/backend
 
