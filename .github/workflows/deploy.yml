@@ -23,6 +23,10 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+      - name: 'Check env variables:'
+        run: |
+          echo '${{ secrets.GAR_LOCATION }}'
+          echo '${{ secrets.GCP_CREDENTIALS }}'
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
 
