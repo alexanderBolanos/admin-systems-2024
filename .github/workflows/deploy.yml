@@ -77,29 +77,29 @@ jobs:
       - name: Set backend and frontend variables
         id: set-frontend-backend
         run: |
-          FRONTEND=$(docker images app-frontend -q)
+          FRONTEND=$(docker images frontend -q)
           echo "Frontend image: $FRONTEND"        
-          BACKEND=$(docker images app-backend -q)
+          BACKEND=$(docker images backend -q)
           echo "BACKEND image: $BACKEND"
 
       - name: Push Backend Docker images to Google Artifact Registry (GAR)
         id: push-backend-images-GAR
         run: |
-          for image in $(docker images app-backend* -q); do
+          for image in $(docker images backend* -q); do
             echo $image
             docker tag $image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
             gcloud docker -- push gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
-            gcloud run deploy adminsys2023-$image --image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image --region ${{secrets.GCP_REGION}} --allow-unauthenticated
+            gcloud run deploy admin-systems-2024-$image --image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image --region ${{secrets.GCP_REGION}} --allow-unauthenticated
           done
 
       - name: Push Frontend Docker images to Google Artifact Registry (GAR)
         id: push-frontend-images-GAR
         run: |
-          for image in $(docker images app-frontend* -q); do
+          for image in $(docker images frontend* -q); do
             echo $image
             docker tag $image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
             gcloud docker -- push gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
-            gcloud run deploy adminsys2023-$image --image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image --region ${{secrets.GCP_REGION}} --allow-unauthenticated
+            gcloud run deploy admin-systems-2024-$image --image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image --region ${{secrets.GCP_REGION}} --allow-unauthenticated
           done
 
     
