@@ -1,0 +1,103 @@
+on:
+  workflow_run:
+    workflows: ["Node.js CI"]
+    types:
+      - completed
+  workflow_dispatch:
+
+name: Build and Deploy to Cloud Run
+
+env:
+  PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+  GAR_LOCATION: ${{secrets.GCP_REGION}}
+  REGION: ${{secrets.GCP_REGION}}
+  DOCKER_DEFAULT_PLATFORM: linux/amd64
+  APP: admin-systems-2024
+
+jobs:
+  deploy:
+    # Add 'id-token' with the intended permissions for workload identity federation
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
+
+      - name: Install Kubernetes Kompose
+        run: |
+          curl -L https://github.com/kubernetes/kompose/releases/download/v1.24.0/kompose-linux-amd64 -o kompose
+          chmod +x kompose
+          sudo mv kompose /usr/local/bin/
+
+      - name: Convert Docker Compose to Kubernetes
+        run: |
+          kompose convert -f docker-compose.yaml
+          ls  # Display the generated Kubernetes files
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          install_components: 'gke-gcloud-auth-plugin'
+          export_default_credentials: true
+        
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+        with:
+          project_id: '${{ env.PROJECT_ID }}'
+
+      - name: 'Docker auth'
+        run: |-
+          gcloud auth configure-docker ${{ secrets.GAR_LOCATION }}-docker.pkg.dev
+
+      - id: 'get-credentials'
+        uses: 'google-github-actions/get-gke-credentials@v1'
+        with:
+          cluster_name: ${{secrets.GKE_CLUSTER_NAME}}
+          location: ${{secrets.GCP_REGION}}
+
+    # The KUBECONFIG env var is automatically exported and picked up by kubectl.
+      - id: 'get-pods'
+        run: 'kubectl get pods'
+
+      - name: Build Docker images
+        id: build-docker-images
+        run: |
+          docker compose build
+          docker images app*
+
+      - name: Set backend and frontend variables
+        id: set-frontend-backend
+        run: |
+          FRONTEND=$(docker images app-frontend -q)
+          echo "Frontend image: $FRONTEND"        
+          BACKEND=$(docker images app-backend -q)
+          echo "BACKEND image: $BACKEND"
+
+      - name: Push Backend Docker images to Google Artifact Registry (GAR)
+        id: push-backend-images-GAR
+        run: |
+          for image in $(docker images app-backend* -q); do
+            echo $image
+            docker tag $image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
+            gcloud docker -- push gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
+            gcloud run deploy adminsys2023-$image --image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image --region ${{secrets.GCP_REGION}} --allow-unauthenticated
+          done
+
+      - name: Push Frontend Docker images to Google Artifact Registry (GAR)
+        id: push-frontend-images-GAR
+        run: |
+          for image in $(docker images app-frontend* -q); do
+            echo $image
+            docker tag $image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
+            gcloud docker -- push gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
+            gcloud run deploy adminsys2023-$image --image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image --region ${{secrets.GCP_REGION}} --allow-unauthenticated
+          done
+
+    
+
+
