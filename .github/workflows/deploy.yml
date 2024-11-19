@@ -72,20 +72,20 @@ jobs:
         id: build-docker-images
         run: |
           docker compose build
-          docker images app*
+          docker images admin-systems-2024*
 
       - name: Set backend and frontend variables
         id: set-frontend-backend
         run: |
-          FRONTEND=$(docker images frontend -q)
+          FRONTEND=$(docker images admin-systems-2024-frontend -q)
           echo "Frontend image: $FRONTEND"        
-          BACKEND=$(docker images backend -q)
+          BACKEND=$(docker images admin-systems-2024-backend -q)
           echo "BACKEND image: $BACKEND"
 
       - name: Push Backend Docker images to Google Artifact Registry (GAR)
         id: push-backend-images-GAR
         run: |
-          for image in $(docker images backend* -q); do
+          for image in $(docker images admin-systems-2024-backend -q); do
             echo $image
             docker tag $image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
             gcloud docker -- push gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
@@ -95,7 +95,7 @@ jobs:
       - name: Push Frontend Docker images to Google Artifact Registry (GAR)
         id: push-frontend-images-GAR
         run: |
-          for image in $(docker images frontend* -q); do
+          for image in $(docker images admin-systems-2024-frontend -q); do
             echo $image
             docker tag $image gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
             gcloud docker -- push gcr.io/${{secrets.GCP_PROJECT_ID}}/$image
