@@ -8,7 +8,7 @@ RUN corepack use pnpm@9.11.0
 FROM base AS build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 RUN pnpm run -r build
 RUN pnpm deploy --filter=backend --prod /prod/backend
 RUN pnpm deploy --filter=frontend --prod /prod/frontend
