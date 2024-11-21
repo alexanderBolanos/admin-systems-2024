@@ -16,12 +16,12 @@ RUN pnpm deploy --filter=frontend --prod /prod/frontend
 FROM base AS backend
 COPY --from=build /prod/backend /prod/backend
 WORKDIR /prod/backend
-EXPOSE 3000
+EXPOSE 8080
 CMD [ "pnpm", "start:prod" ]
 
 FROM base AS frontend
 COPY --from=build /prod/frontend /prod/frontend
 COPY --from=build --chown=nextjs:nodejs /usr/src/app/projects/frontend/.next ./prod/frontend/.next
 WORKDIR /prod/frontend
-EXPOSE 8080
+EXPOSE 8181
 CMD [ "pnpm", "start" ]
